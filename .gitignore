@@ -36,3 +36,10 @@ yarn-error.log*
 # Misc
 .DS_Store
 *.pem
+
+# IDE
+.vscode
+.idea
+.cursor
+.agents
+.claude
