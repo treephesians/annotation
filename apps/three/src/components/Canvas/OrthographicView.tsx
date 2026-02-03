@@ -1,4 +1,5 @@
 import { OrthographicCamera } from "@react-three/drei";
+import { CameraController } from "../Controls/CameraController";
 
 export function OrthographicView() {
   return (
@@ -10,6 +11,7 @@ export function OrthographicView() {
         near={0.1}
         far={1000}
       />
+      <CameraController isOrtho />
       <color attach="background" args={["#303035"]} />
       <ambientLight intensity={0.5} />
       <directionalLight position={[10, 10, 5]} intensity={1} />

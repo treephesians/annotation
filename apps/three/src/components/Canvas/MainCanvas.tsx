@@ -2,14 +2,20 @@ import { Canvas } from "@react-three/fiber";
 import { View } from "@react-three/drei";
 import { useRef } from "react";
 import { PerspectiveView } from "./PerspectiveView";
+import { OrthographicView } from "./OrthographicView";
 import { SceneObjects } from "../Scene/SceneObjects";
 import { CenterPoint } from "../Scene/CenterPoint";
-import { OrthographicView } from "./OrthographicView";
+import { CameraInfo } from "../UI/CameraInfo";
+import { KeyGuide } from "../UI/KeyGuide";
+import { useKeyboard } from "@/hooks/useKeyboard";
 
 export function MainCanvas() {
   const containerRef = useRef<HTMLDivElement>(null!);
   const view1Ref = useRef<HTMLDivElement>(null!);
   const view2Ref = useRef<HTMLDivElement>(null!);
+
+  // Enable keyboard controls
+  useKeyboard();
 
   return (
     <div
@@ -21,6 +27,9 @@ export function MainCanvas() {
         background: "#1a1a1a",
       }}
     >
+      {/* UI Overlays */}
+      <CameraInfo />
+      <KeyGuide />
       {/* View 1: Perspective (70%) */}
       <div
         ref={view1Ref}

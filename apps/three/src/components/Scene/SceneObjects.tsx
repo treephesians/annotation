@@ -19,10 +19,10 @@ export function SceneObjects() {
       />
 
       {/* Box - Orange */}
-      <mesh position={[0, 1, 0]}>
+      {/* <mesh position={[0, 1, 0]}>
         <boxGeometry args={[2, 2, 2]} />
         <meshStandardMaterial color="orange" />
-      </mesh>
+      </mesh> */}
 
       {/* Sphere - Cyan */}
       <mesh position={[3, 1, 0]}>
