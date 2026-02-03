@@ -6,9 +6,13 @@ import { SideView } from "./SideView";
 import { TopDownView } from "./TopDownView";
 import { SceneObjects } from "../Scene/SceneObjects";
 import { CenterPoint } from "../Scene/CenterPoint";
+import { RayVisualization } from "../Scene/RayVisualization";
+import { ViewClickHandler } from "../Controls/ViewClickHandler";
 import { CameraInfo } from "../UI/CameraInfo";
 import { KeyGuide } from "../UI/KeyGuide";
+import { ModeIndicator } from "../UI/ModeIndicator";
 import { useKeyboard } from "@/hooks/useKeyboard";
+import { useAnnotations } from "@/hooks/useAnnotations";
 
 function ViewLabel({ children }: { children: string }) {
   return (
@@ -37,8 +41,13 @@ export function MainCanvas() {
   const sideRef = useRef<HTMLDivElement>(null!);
   const topDownRef = useRef<HTMLDivElement>(null!);
 
+  const { interactionMode } = useAnnotations();
+
   // Enable keyboard controls
   useKeyboard();
+
+  // Cursor style based on mode
+  const cursorStyle = interactionMode === "annotation" ? "none" : "default";
 
   return (
     <div
@@ -48,6 +57,7 @@ export function MainCanvas() {
         height: "100vh",
         display: "flex",
         background: "#1a1a1a",
+        cursor: cursorStyle,
       }}
     >
       {/* UI Overlays */}
@@ -62,9 +72,11 @@ export function MainCanvas() {
           height: "100%",
           borderRight: "1px solid #333",
           position: "relative",
+          cursor: cursorStyle,
         }}
       >
         <ViewLabel>Main</ViewLabel>
+        <ModeIndicator />
       </div>
 
       {/* Right Panel (30%) - Split into Side and TopDown */}
@@ -84,6 +96,7 @@ export function MainCanvas() {
             height: "50%",
             borderBottom: "1px solid #333",
             position: "relative",
+            cursor: cursorStyle,
           }}
         >
           <ViewLabel>Side</ViewLabel>
@@ -96,6 +109,7 @@ export function MainCanvas() {
             width: "100%",
             height: "50%",
             position: "relative",
+            cursor: cursorStyle,
           }}
         >
           <ViewLabel>Top-Down</ViewLabel>
@@ -117,22 +131,28 @@ export function MainCanvas() {
         {/* Perspective View */}
         <View track={perspectiveRef}>
           <PerspectiveView />
+          <ViewClickHandler viewType="perspective" containerRef={perspectiveRef} />
           <SceneObjects />
           <CenterPoint />
+          <RayVisualization />
         </View>
 
         {/* Side View */}
         <View track={sideRef}>
           <SideView />
+          <ViewClickHandler viewType="side" containerRef={sideRef} />
           <SceneObjects />
           <CenterPoint />
+          <RayVisualization />
         </View>
 
         {/* Top-Down View */}
         <View track={topDownRef}>
           <TopDownView />
+          <ViewClickHandler viewType="topDown" containerRef={topDownRef} />
           <SceneObjects />
           <CenterPoint />
+          <RayVisualization />
         </View>
       </Canvas>
     </div>

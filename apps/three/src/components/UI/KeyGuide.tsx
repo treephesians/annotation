@@ -1,4 +1,10 @@
+import { useAnnotations } from "../../hooks/useAnnotations";
+
 export function KeyGuide() {
+  const { interactionMode, currentDepth, rayFixed } = useAnnotations();
+
+  const isAnnotation = interactionMode === "annotation";
+
   return (
     <div
       style={{
@@ -15,9 +21,16 @@ export function KeyGuide() {
         lineHeight: 1.8,
       }}
     >
-      <div style={{ fontWeight: "bold", marginBottom: 8 }}>Camera Controls</div>
+      <div style={{ fontWeight: "bold", marginBottom: 8 }}>Mode</div>
       <div>
-        <kbd>Q</kbd> / <kbd>E</kbd> : Zoom Out / In
+        <kbd>Tab</kbd> : Toggle Mode
+      </div>
+
+      <div style={{ fontWeight: "bold", marginTop: 12, marginBottom: 8 }}>
+        Camera
+      </div>
+      <div>
+        <kbd>E</kbd> / <kbd>Q</kbd> : Zoom In / Out
       </div>
       <div>
         <kbd>W</kbd> / <kbd>S</kbd> : Up / Down
@@ -28,6 +41,39 @@ export function KeyGuide() {
       <div>
         <kbd>R</kbd> : Reset
       </div>
+
+      {isAnnotation && (
+        <>
+          <div
+            style={{
+              fontWeight: "bold",
+              marginTop: 12,
+              marginBottom: 8,
+              color: "#ffff00",
+            }}
+          >
+            Annotation {rayFixed && "(Fixed)"}
+          </div>
+          <div>
+            <kbd>Move</kbd> : Aim Ray
+          </div>
+          <div>
+            <kbd>F</kbd> : Fix / Unfix Ray
+          </div>
+          <div>
+            <kbd>Wheel</kbd> / <kbd>+</kbd> <kbd>-</kbd> : Depth
+          </div>
+          <div>
+            <kbd>Click</kbd> : Place Point
+          </div>
+          <div>
+            <kbd>Esc</kbd> : Exit Mode
+          </div>
+          <div style={{ marginTop: 8, color: rayFixed ? "#00ff00" : "#ffff00" }}>
+            Depth: {currentDepth.toFixed(1)} {rayFixed && "🔒"}
+          </div>
+        </>
+      )}
     </div>
   );
 }
