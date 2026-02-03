@@ -17,7 +17,7 @@ export function KeyGuide() {
     >
       <div style={{ fontWeight: "bold", marginBottom: 8 }}>Camera Controls</div>
       <div>
-        <kbd>E</kbd> / <kbd>Q</kbd> : Zoom In / Out
+        <kbd>Q</kbd> / <kbd>E</kbd> : Zoom Out / In
       </div>
       <div>
         <kbd>W</kbd> / <kbd>S</kbd> : Up / Down
