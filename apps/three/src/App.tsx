@@ -1,14 +1,7 @@
-import { Button } from "@repo/ui/button";
-import "./App.css";
+import { MainCanvas } from "./components/Canvas/MainCanvas";
 
 function App() {
-  return (
-    <div className="app">
-      <h1>Vite + React</h1>
-      <p className="subtitle">모노레포 Vite 앱</p>
-      <Button appName="Vite">시작하기</Button>
-    </div>
-  );
+  return <MainCanvas />;
 }
 
 export default App;
