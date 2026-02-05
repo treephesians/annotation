@@ -1,11 +1,17 @@
 import { useMemo } from "react";
 import { Line } from "@react-three/drei";
+import { useShallow } from 'zustand/react/shallow';
 import { useAnnotations } from "../../hooks/useAnnotations";
 
 const RAY_LENGTH = 50;
 
 export function RayVisualization() {
-  const { currentRay, currentDepth } = useAnnotations();
+  const { currentRay, currentDepth } = useAnnotations(
+    useShallow((state) => ({
+      currentRay: state.currentRay,
+      currentDepth: state.currentDepth,
+    }))
+  );
 
   const points = useMemo(() => {
     if (!currentRay) return null;
@@ -36,7 +42,7 @@ export function RayVisualization() {
         color="#ffff00"
         lineWidth={2}
         transparent
-        opacity={0.6}
+        opacity={0.4}
       />
 
       {/* Current depth marker (temporary annotation point) */}
@@ -50,13 +56,13 @@ export function RayVisualization() {
               emissive="#ffff00"
               emissiveIntensity={0.5}
               transparent
-              opacity={0.6}
+              opacity={0.4}
               depthWrite={false}
             />
           </mesh>
           {/* Inner White dot (center)*/}
           <mesh>
-            <sphereGeometry args={[0.03, 8, 8]} />
+            <sphereGeometry args={[0.02, 8, 8]} />
             <meshBasicMaterial color="#ffffff" />
           </mesh>
         </group>
