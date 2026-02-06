@@ -9,7 +9,6 @@ import { CenterPoint } from "../Scene/CenterPoint";
 import { RayVisualization } from "../Scene/RayVisualization";
 import { Annotations } from "../Scene/Annotations";
 import { ViewClickHandler } from "../Controls/ViewClickHandler";
-import { AxisGizmo } from "../UI/AxisGizmo";
 import { CameraInfo } from "../UI/CameraInfo";
 import { KeyGuide } from "../UI/KeyGuide";
 import { ModeIndicator } from "../UI/ModeIndicator";
@@ -79,7 +78,6 @@ export function MainCanvas() {
       >
         <ViewLabel>Main</ViewLabel>
         <ModeIndicator />
-        <AxisGizmo />
       </div>
 
       {/* Right Panel (30%) - Split into Side and TopDown */}
@@ -137,7 +135,7 @@ export function MainCanvas() {
           <ViewClickHandler viewType="perspective" containerRef={perspectiveRef} />
           <SceneObjects />
           <CenterPoint />
-          <Annotations />
+          <Annotations viewType="perspective" />
           <RayVisualization />
         </View>
 
@@ -147,7 +145,7 @@ export function MainCanvas() {
           <ViewClickHandler viewType="side" containerRef={sideRef} />
           <SceneObjects />
           <CenterPoint />
-          <Annotations />
+          <Annotations viewType="side" />
           <RayVisualization />
           
         </View>
@@ -158,7 +156,7 @@ export function MainCanvas() {
           <ViewClickHandler viewType="topDown" containerRef={topDownRef} />
           <SceneObjects />
           <CenterPoint />
-          <Annotations />
+          <Annotations viewType="topDown" />
           <RayVisualization />
         </View>
       </Canvas>

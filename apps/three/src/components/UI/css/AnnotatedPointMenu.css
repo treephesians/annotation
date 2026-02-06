@@ -1,0 +1,100 @@
+.context-menu {
+  background: rgba(30, 30, 40, 0.95);
+  border-radius: 8px;
+  padding: 8px;
+  min-width: 160px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  user-select: none;
+  position: relative;
+}
+
+.context-menu__close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px;
+  line-height: 1;
+}
+
+.context-menu__close:hover {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.context-menu__header {
+  padding: 8px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 4px;
+}
+
+.context-menu__label {
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.context-menu__coords {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 11px;
+  margin-top: 4px;
+}
+
+.context-menu__input {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  padding: 4px 8px;
+  color: #ffffff;
+  font-size: 14px;
+  width: 100%;
+  outline: none;
+}
+
+.context-menu__input:focus {
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.context-menu__body {
+  padding: 4px 0;
+}
+
+/* Menu Item */
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.15s ease;
+  background: transparent;
+  color: #ffffff;
+}
+
+.menu-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.menu-item--danger {
+  color: #ff6b6b;
+}
+
+.menu-item--danger:hover {
+  background: rgba(255, 80, 80, 0.3);
+}
+
+.menu-item__icon {
+  font-size: 14px;
+}
+
+.menu-item__label {
+  font-size: 13px;
+  font-weight: 500;
+}

@@ -29,6 +29,9 @@ interface AnnotationState {
   // Confirmed annotations
   annotations: Annotation[];
 
+  // Selection state
+  selectedAnnotationId: string | null;
+
   // Actions
   toggleMode: () => void;
   setRay: (ray: RayState | null) => void;
@@ -37,6 +40,7 @@ interface AnnotationState {
   toggleRayFixed: () => void;
   confirmAnnotation: () => void;
   cancelAnnotation: () => void;
+  selectAnnotation: (id: string | null) => void;
   deleteAnnotation: (id: string) => void;
   clearAll: () => void;
 }
@@ -52,6 +56,7 @@ export const useAnnotations = create<AnnotationState>((set, get) => ({
   currentDepth: DEFAULT_DEPTH,
   rayFixed: false,
   annotations: [],
+  selectedAnnotationId: null,
 
   toggleMode: () =>
     set((state) => ({
@@ -114,9 +119,14 @@ export const useAnnotations = create<AnnotationState>((set, get) => ({
       rayFixed: false,
     }),
 
+  selectAnnotation: (id) =>
+    set({ selectedAnnotationId: id }),
+
   deleteAnnotation: (id) =>
     set((state) => ({
       annotations: state.annotations.filter((a) => a.id !== id),
+      selectedAnnotationId:
+        state.selectedAnnotationId === id ? null : state.selectedAnnotationId,
     })),
 
   clearAll: () =>
@@ -126,5 +136,6 @@ export const useAnnotations = create<AnnotationState>((set, get) => ({
       currentDepth: DEFAULT_DEPTH,
       rayFixed: false,
       interactionMode: "mouse",
+      selectedAnnotationId: null,
     }),
 }));

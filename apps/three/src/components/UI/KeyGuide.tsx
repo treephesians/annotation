@@ -1,9 +1,12 @@
 import { useAnnotations } from "../../hooks/useAnnotations";
 
 export function KeyGuide() {
-  const { interactionMode, currentDepth, rayFixed } = useAnnotations();
+  const { interactionMode, currentDepth, rayFixed, selectedAnnotationId } =
+    useAnnotations();
 
   const isAnnotation = interactionMode === "annotation";
+  const isMouse = interactionMode === "mouse";
+  const hasSelection = selectedAnnotationId !== null;
 
   return (
     <div
@@ -23,24 +26,54 @@ export function KeyGuide() {
     >
       <div style={{ fontWeight: "bold", marginBottom: 8 }}>Mode</div>
       <div>
-        <kbd>Tab</kbd> : Toggle Mode
+        <kbd>[Tab]</kbd> : Toggle Mode
       </div>
 
       <div style={{ fontWeight: "bold", marginTop: 12, marginBottom: 8 }}>
         Camera
       </div>
       <div>
-        <kbd>E</kbd> / <kbd>Q</kbd> : Zoom In / Out
+        <kbd>[E]</kbd> / <kbd>[Q]</kbd> : Zoom In / Out
       </div>
       <div>
-        <kbd>W</kbd> / <kbd>S</kbd> : Up / Down
+        <kbd>[W]</kbd> / <kbd>[S]</kbd> : Up / Down
       </div>
       <div>
-        <kbd>A</kbd> / <kbd>D</kbd> : Left / Right
+        <kbd>[A]</kbd> / <kbd>[D]</kbd> : Left / Right
       </div>
       <div>
-        <kbd>R</kbd> : Reset
+        <kbd>[R]</kbd> : Reset
       </div>
+
+      {isMouse && (
+        <>
+          <div
+            style={{
+              fontWeight: "bold",
+              marginTop: 12,
+              marginBottom: 8,
+              color: "#88ccff",
+            }}
+          >
+            Selection {hasSelection && "(Active)"}
+          </div>
+          <div>
+            <kbd>(Click)</kbd> : Select Pt
+          </div>
+          {
+            hasSelection && (
+              <>
+                <div>
+                  <kbd>[Delete]</kbd> : Delete Pt
+                </div>
+                <div>
+                  <kbd>[Esc]</kbd> : Deselect Pt
+                </div>
+              </>
+            )
+          }
+        </>
+      )}
 
       {isAnnotation && (
         <>
@@ -55,19 +88,19 @@ export function KeyGuide() {
             Annotation {rayFixed && "(Fixed)"}
           </div>
           <div>
-            <kbd>Move</kbd> : Aim Ray
+            <kbd>(Move)</kbd> : Aim Ray
           </div>
           <div>
-            <kbd>F</kbd> : Fix / Unfix Ray
+            <kbd>(Wheel)</kbd> / <kbd>+</kbd> <kbd>-</kbd> : Depth
           </div>
           <div>
-            <kbd>Wheel</kbd> / <kbd>+</kbd> <kbd>-</kbd> : Depth
+            <kbd>(Click)</kbd> : Place Point
           </div>
           <div>
-            <kbd>Click</kbd> : Place Point
+            <kbd>[F]</kbd> : Fix / Unfix Ray
           </div>
           <div>
-            <kbd>Esc</kbd> : Exit Mode
+            <kbd>[Esc]</kbd> : Exit Mode
           </div>
           <div style={{ marginTop: 8, color: rayFixed ? "#00ff00" : "#ffff00" }}>
             Depth: {currentDepth.toFixed(1)} {rayFixed && "🔒"}

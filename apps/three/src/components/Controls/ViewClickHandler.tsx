@@ -13,7 +13,7 @@ export function ViewClickHandler({
   containerRef,
 }: ViewClickHandlerProps) {
   const { camera } = useThree();
-  const { setRay, interactionMode, adjustDepth, confirmAnnotation } = useAnnotations();
+  const { setRay, interactionMode, adjustDepth, confirmAnnotation, selectAnnotation } = useAnnotations();
 
   const createRay = useCallback(
     (event: MouseEvent) => {
@@ -50,11 +50,16 @@ export function ViewClickHandler({
 
   const handleClick = useCallback(
     (event: MouseEvent) => {
-      if (interactionMode !== "annotation") return;
-      // In annotation mode, click confirms the annotation
-      confirmAnnotation();
+      if (interactionMode === "annotation") {
+        // In annotation mode, click confirms the annotation
+        confirmAnnotation();
+      } else {
+        // In mouse mode, clicking on empty space deselects
+        // Note: clicks on annotations are handled by Annotations component with stopPropagation
+        selectAnnotation(null);
+      }
     },
-    [interactionMode, confirmAnnotation]
+    [interactionMode, confirmAnnotation, selectAnnotation]
   );
 
   const handleMouseLeave = useCallback(() => {

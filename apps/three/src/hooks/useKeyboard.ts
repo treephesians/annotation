@@ -19,6 +19,9 @@ export function useKeyboard() {
     adjustDepth,
     toggleRayFixed,
     cancelAnnotation,
+    selectedAnnotationId,
+    selectAnnotation,
+    deleteAnnotation,
   } = useAnnotations();
 
   const handleKeyDown = useCallback(
@@ -38,10 +41,26 @@ export function useKeyboard() {
         return;
       }
 
-      // Escape to exit annotation mode
-      if (event.key === "Escape" && interactionMode === "annotation") {
-        cancelAnnotation();
-        toggleMode();
+      // Escape handling
+      if (event.key === "Escape") {
+        if (interactionMode === "annotation") {
+          // Exit annotation mode
+          cancelAnnotation();
+          toggleMode();
+        } else if (selectedAnnotationId) {
+          // Deselect annotation in mouse mode
+          selectAnnotation(null);
+        }
+        return;
+      }
+
+      // Delete selected annotation in mouse mode
+      if (
+        (event.key === "Delete" || event.key === "Backspace") &&
+        interactionMode === "mouse" &&
+        selectedAnnotationId
+      ) {
+        deleteAnnotation(selectedAnnotationId);
         return;
       }
 
@@ -104,6 +123,9 @@ export function useKeyboard() {
       adjustDepth,
       toggleRayFixed,
       cancelAnnotation,
+      selectedAnnotationId,
+      selectAnnotation,
+      deleteAnnotation,
     ]
   );
 
