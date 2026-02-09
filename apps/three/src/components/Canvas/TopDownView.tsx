@@ -6,7 +6,7 @@ export function TopDownView() {
     <>
       <OrthographicCamera
         makeDefault
-        position={[0, 10, 0]}
+        position={[5, 5, 5]}
         zoom={50}
         near={0.1}
         far={1000}
