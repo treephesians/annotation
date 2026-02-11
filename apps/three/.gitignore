@@ -26,3 +26,5 @@ npm-debug.log*
 vite.config.js
 vite.config.d.ts
 vite.config.d.ts.map
+
+public/data/

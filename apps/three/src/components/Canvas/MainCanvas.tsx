@@ -8,6 +8,7 @@ import { SceneObjects } from "../Scene/SceneObjects";
 import { CenterPoint } from "../Scene/CenterPoint";
 import { RayVisualization } from "../Scene/RayVisualization";
 import { Annotations } from "../Scene/Annotations";
+import { PointCloud } from "../Scene/PointCloud";
 import { ViewClickHandler } from "../Controls/ViewClickHandler";
 import { CameraInfo } from "../UI/CameraInfo";
 import { KeyGuide } from "../UI/KeyGuide";
@@ -49,6 +50,8 @@ export function MainCanvas() {
 
   // Cursor style based on mode
   const cursorStyle = interactionMode === "annotation" ? "none" : "default";
+
+  const pointCloudFilePath = "/data/2011_09_26_drive_0018_sync/velodyne_points/data/0000000000.bin";
 
   return (
     <div
@@ -133,7 +136,11 @@ export function MainCanvas() {
         <View track={perspectiveRef}>
           <PerspectiveView />
           <ViewClickHandler viewType="perspective" containerRef={perspectiveRef} />
-          <SceneObjects />
+          {/* <SceneObjects /> */}
+          <PointCloud 
+            filePath={pointCloudFilePath}
+            pointSize={0.02}
+          />
           <CenterPoint />
           <Annotations viewType="perspective" />
           <RayVisualization />
@@ -143,18 +150,25 @@ export function MainCanvas() {
         <View track={sideRef}>
           <SideView />
           <ViewClickHandler viewType="side" containerRef={sideRef} />
-          <SceneObjects />
+          {/* <SceneObjects /> */}
+          <PointCloud 
+            filePath={pointCloudFilePath}
+            pointSize={0.02}
+          />
           <CenterPoint />
           <Annotations viewType="side" />
           <RayVisualization />
-          
         </View>
 
         {/* Top-Down View */}
         <View track={topDownRef}>
           <TopDownView />
           <ViewClickHandler viewType="topDown" containerRef={topDownRef} />
-          <SceneObjects />
+          {/* <SceneObjects /> */}
+          <PointCloud 
+            filePath={pointCloudFilePath}
+            pointSize={0.02}
+          />
           <CenterPoint />
           <Annotations viewType="topDown" />
           <RayVisualization />
