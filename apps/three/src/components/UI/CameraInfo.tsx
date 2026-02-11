@@ -9,13 +9,13 @@ export function CameraInfo() {
     <div
       style={{
         position: "fixed",
-        top: 16,
+        bottom: 16,
         left: 16,
         background: "rgba(0, 0, 0, 0.7)",
         color: "#fff",
         padding: "12px 16px",
         borderRadius: 8,
-        fontSize: 13,
+        fontSize: 10,
         fontFamily: "monospace",
         zIndex: 100,
         lineHeight: 1.6,

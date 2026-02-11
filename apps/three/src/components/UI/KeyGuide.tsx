@@ -12,13 +12,13 @@ export function KeyGuide() {
     <div
       style={{
         position: "fixed",
-        bottom: 16,
+        top: 16,
         left: 16,
         background: "rgba(0, 0, 0, 0.7)",
         color: "#fff",
         padding: "12px 16px",
         borderRadius: 8,
-        fontSize: 12,
+        fontSize: 10,
         fontFamily: "monospace",
         zIndex: 100,
         lineHeight: 1.8,

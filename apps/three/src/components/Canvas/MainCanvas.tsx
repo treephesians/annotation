@@ -4,7 +4,7 @@ import { useRef } from "react";
 import { PerspectiveView } from "./PerspectiveView";
 import { SideView } from "./SideView";
 import { TopDownView } from "./TopDownView";
-import { SceneObjects } from "../Scene/SceneObjects";
+//import { SceneObjects } from "../Scene/SceneObjects";
 import { CenterPoint } from "../Scene/CenterPoint";
 import { RayVisualization } from "../Scene/RayVisualization";
 import { Annotations } from "../Scene/Annotations";
@@ -26,7 +26,7 @@ function ViewLabel({ children }: { children: string }) {
         color: "#fff",
         padding: "4px 8px",
         borderRadius: 4,
-        fontSize: 12,
+        fontSize: 10,
         fontFamily: "monospace",
         zIndex: 10,
         pointerEvents: "none",
