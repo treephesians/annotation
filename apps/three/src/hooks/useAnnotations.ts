@@ -1,13 +1,14 @@
 import { create } from "zustand";
 import * as THREE from "three";
 import { v4 as uuidv4 } from "uuid";
+import type { ViewType, InteractionMode } from "../types/view";
 
-export type InteractionMode = "mouse" | "annotation";
+export type { InteractionMode };
 
 export interface RayState {
   origin: THREE.Vector3;
   direction: THREE.Vector3;
-  viewType: "perspective" | "side" | "topDown";
+  viewType: ViewType;
 }
 
 export interface Annotation {

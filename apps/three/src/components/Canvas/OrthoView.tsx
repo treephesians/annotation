@@ -1,7 +1,13 @@
 import { OrthographicCamera } from "@react-three/drei";
 import { CameraController } from "../Controls/CameraController";
+import { SCENE } from "@/constants/scene";
+import type { ViewType } from "@/types/view";
 
-export function TopDownView() {
+interface OrthoViewProps {
+  viewType: Exclude<ViewType, "perspective">;
+}
+
+export function OrthoView({ viewType }: OrthoViewProps) {
   return (
     <>
       <OrthographicCamera
@@ -11,8 +17,8 @@ export function TopDownView() {
         near={0.1}
         far={1000}
       />
-      <CameraController viewType="topDown" />
-      <color attach="background" args={["#352530"]} />
+      <CameraController viewType={viewType} />
+      <color attach="background" args={[SCENE.BACKGROUND[viewType]]} />
       <ambientLight intensity={0.5} />
       <directionalLight position={[10, 10, 5]} intensity={1} />
     </>

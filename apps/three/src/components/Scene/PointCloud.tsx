@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo } from "react";
 import { BufferGeometry, Float32BufferAttribute, PointsMaterial } from "three";
-import { loadKittiPointCloud, pointsToBufferData } from "@/utils/loadPointCloud";
+import { usePointCloudData } from "@/hooks/usePointCloudData";
+import { SCENE } from "@/constants/scene";
 
 interface PointCloudProps {
   filePath: string;
@@ -11,12 +12,12 @@ interface PointCloudProps {
 
 export function PointCloud({
   filePath,
-  pointSize = 0.01,
+  pointSize = SCENE.POINT_CLOUD.DEFAULT_POINT_SIZE,
   color,
   position = [0, 0, 0],
 }: PointCloudProps) {
+  const { positions, colors: vertexColors, load } = usePointCloudData();
   const geometry = useMemo(() => new BufferGeometry(), []);
-  const pointsRef = useRef<any>(null);
 
   const material = useMemo(() => {
     return new PointsMaterial({
@@ -27,44 +28,29 @@ export function PointCloud({
     });
   }, [pointSize, color]);
 
-  // 포인트 클라우드 데이터 로드
   useEffect(() => {
-    let isMounted = true;
+    load(filePath);
+  }, [filePath, load]);
 
-    const loadData = async () => {
-      try {
-        const points = await loadKittiPointCloud(filePath);
-        if (!isMounted) return;
+  useEffect(() => {
+    if (!positions) return;
 
-        const { positions, colors } = pointsToBufferData(points);
+    geometry.setAttribute(
+      "position",
+      new Float32BufferAttribute(positions, 3)
+    );
+    if (!color && vertexColors) {
+      geometry.setAttribute(
+        "color",
+        new Float32BufferAttribute(vertexColors, 3)
+      );
+    }
 
-        geometry.setAttribute(
-          "position",
-          new Float32BufferAttribute(positions, 3)
-        );
-        if (!color) {
-          geometry.setAttribute(
-            "color",
-            new Float32BufferAttribute(colors, 3)
-          );
-        }
-
-        geometry.computeBoundingSphere();
-      } catch (error) {
-        console.error("Failed to load point cloud:", error);
-      }
-    };
-
-    loadData();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [filePath, color, geometry]);
+    geometry.computeBoundingSphere();
+  }, [positions, vertexColors, color, geometry]);
 
   return (
     <points
-      ref={pointsRef}
       geometry={geometry}
       material={material}
       position={position}

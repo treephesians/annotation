@@ -1,6 +1,13 @@
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback, useMemo } from "react";
 import { useCameraControl } from "./useCameraControl";
 import { useAnnotations } from "./useAnnotations";
+
+interface KeyBinding {
+  action: () => void;
+  preventDefault?: boolean;
+}
+
+type KeyMap = Record<string, KeyBinding>;
 
 export function useKeyboard() {
   const {
@@ -24,9 +31,71 @@ export function useKeyboard() {
     deleteAnnotation,
   } = useAnnotations();
 
+  const handleEscape = useCallback(() => {
+    if (interactionMode === "annotation") {
+      cancelAnnotation();
+      toggleMode();
+    } else if (selectedAnnotationId) {
+      selectAnnotation(null);
+    }
+  }, [interactionMode, cancelAnnotation, toggleMode, selectedAnnotationId, selectAnnotation]);
+
+  const handleDelete = useCallback(() => {
+    if (interactionMode === "mouse" && selectedAnnotationId) {
+      deleteAnnotation(selectedAnnotationId);
+    }
+  }, [interactionMode, selectedAnnotationId, deleteAnnotation]);
+
+  const keyMap = useMemo<KeyMap>(() => {
+    const map: KeyMap = {
+      // Global
+      Tab: { action: toggleMode, preventDefault: true },
+      Escape: { action: handleEscape },
+      // Camera
+      e: { action: zoomIn },
+      q: { action: zoomOut },
+      a: { action: rotateLeft },
+      d: { action: rotateRight },
+      w: { action: rotateUp },
+      s: { action: rotateDown },
+      r: { action: reset },
+    };
+
+    if (interactionMode === "annotation") {
+      Object.assign(map, {
+        f: { action: toggleRayFixed },
+        "+": { action: () => adjustDepth(1) },
+        "=": { action: () => adjustDepth(1) },
+        "]": { action: () => adjustDepth(1) },
+        "-": { action: () => adjustDepth(-1) },
+        "[": { action: () => adjustDepth(-1) },
+      });
+    } else {
+      Object.assign(map, {
+        Delete: { action: handleDelete },
+        Backspace: { action: handleDelete },
+      });
+    }
+
+    return map;
+  }, [
+    interactionMode,
+    toggleMode,
+    handleEscape,
+    handleDelete,
+    zoomIn,
+    zoomOut,
+    rotateLeft,
+    rotateRight,
+    rotateUp,
+    rotateDown,
+    reset,
+    toggleRayFixed,
+    adjustDepth,
+  ]);
+
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
-      // Ignore if user is typing in an input
       if (
         event.target instanceof HTMLInputElement ||
         event.target instanceof HTMLTextAreaElement
@@ -34,105 +103,17 @@ export function useKeyboard() {
         return;
       }
 
-      // Tab to toggle mode
-      if (event.key === "Tab") {
-        event.preventDefault();
-        toggleMode();
-        return;
-      }
+      const binding = keyMap[event.key] ?? keyMap[event.key.toLowerCase()];
+      if (!binding) return;
 
-      // Escape handling
-      if (event.key === "Escape") {
-        if (interactionMode === "annotation") {
-          // Exit annotation mode
-          cancelAnnotation();
-          toggleMode();
-        } else if (selectedAnnotationId) {
-          // Deselect annotation in mouse mode
-          selectAnnotation(null);
-        }
-        return;
-      }
-
-      // Delete selected annotation in mouse mode
-      if (
-        (event.key === "Delete" || event.key === "Backspace") &&
-        interactionMode === "mouse" &&
-        selectedAnnotationId
-      ) {
-        deleteAnnotation(selectedAnnotationId);
-        return;
-      }
-
-      // Annotation mode controls
-      if (interactionMode === "annotation") {
-        switch (event.key) {
-          case "f":
-          case "F":
-            toggleRayFixed();
-            return;
-          case "+":
-          case "=":
-          case "]":
-            adjustDepth(1);
-            return;
-          case "-":
-          case "[":
-            adjustDepth(-1);
-            return;
-        }
-      }
-
-      const key = event.key.toLowerCase();
-
-      // Camera controls
-      switch (key) {
-        case "e":
-          zoomIn();
-          break;
-        case "q":
-          zoomOut();
-          break;
-        case "a":
-          rotateLeft();
-          break;
-        case "d":
-          rotateRight();
-          break;
-        case "w":
-          rotateUp();
-          break;
-        case "s":
-          rotateDown();
-          break;
-        case "r":
-          reset();
-          break;
-      }
+      if (binding.preventDefault) event.preventDefault();
+      binding.action();
     },
-    [
-      zoomIn,
-      zoomOut,
-      rotateLeft,
-      rotateRight,
-      rotateUp,
-      rotateDown,
-      reset,
-      interactionMode,
-      toggleMode,
-      adjustDepth,
-      toggleRayFixed,
-      cancelAnnotation,
-      selectedAnnotationId,
-      selectAnnotation,
-      deleteAnnotation,
-    ]
+    [keyMap]
   );
 
   useEffect(() => {
     window.addEventListener("keydown", handleKeyDown);
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [handleKeyDown]);
 }

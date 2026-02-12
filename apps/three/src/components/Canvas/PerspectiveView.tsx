@@ -1,5 +1,6 @@
 import { PerspectiveCamera } from "@react-three/drei";
 import { CameraController } from "../Controls/CameraController";
+import { SCENE } from "@/constants/scene";
 
 export function PerspectiveView() {
   return (
@@ -12,7 +13,7 @@ export function PerspectiveView() {
         far={1000}
       />
       <CameraController viewType="perspective" />
-      <color attach="background" args={["#252530"]} />
+      <color attach="background" args={[SCENE.BACKGROUND.perspective]} />
       <ambientLight intensity={0.5} />
       <directionalLight position={[10, 10, 5]} intensity={1} />
     </>

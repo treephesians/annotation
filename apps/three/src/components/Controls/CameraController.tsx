@@ -3,8 +3,8 @@ import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { useCameraControl } from "../../hooks/useCameraControl";
 import { sphericalToCartesian } from "../../utils/sphericalCoordinates";
-
-type ViewType = "perspective" | "side" | "topDown";
+import { SCENE } from "@/constants/scene";
+import type { ViewType } from "@/types/view";
 
 interface CameraControllerProps {
   viewType?: ViewType;
@@ -31,7 +31,7 @@ export function CameraController({ viewType = "perspective" }: CameraControllerP
     const forward = new THREE.Vector3()
       .subVectors(target, currentPos)
       .normalize();
-    
+
     const right = new THREE.Vector3(-forward.z, 0, forward.x).normalize();
     const up = new THREE.Vector3().crossVectors(forward, right).normalize();
 
@@ -64,7 +64,7 @@ export function CameraController({ viewType = "perspective" }: CameraControllerP
     camera.lookAt(target);
 
     if (viewType !== "perspective" && camera instanceof THREE.OrthographicCamera) {
-      camera.zoom = 300 / distance;
+      camera.zoom = SCENE.CAMERA.ORTHO_ZOOM_FACTOR / distance;
       camera.updateProjectionMatrix();
     }
   });

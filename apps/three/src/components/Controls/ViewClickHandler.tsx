@@ -2,9 +2,10 @@ import { useThree } from "@react-three/fiber";
 import { useCallback, useEffect } from "react";
 import * as THREE from "three";
 import { useAnnotations, RayState } from "../../hooks/useAnnotations";
+import type { ViewType } from "@/types/view";
 
 interface ViewClickHandlerProps {
-  viewType: "perspective" | "side" | "topDown";
+  viewType: ViewType;
   containerRef: React.RefObject<HTMLDivElement>;
 }
 

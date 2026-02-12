@@ -1,13 +1,16 @@
 import { ThreeEvent } from "@react-three/fiber";
+import { useShallow } from "zustand/react/shallow";
 import { useAnnotations, Annotation } from "../../hooks/useAnnotations";
 import { AnnotatedPointMenu } from "../UI/AnnotatedPointMenu";
+import { SCENE } from "@/constants/scene";
+import type { ViewType, InteractionMode } from "@/types/view";
 
 interface AnnotationMeshProps {
   annotation: Annotation;
   isSelected: boolean;
   onSelect: (id: string) => void;
-  interactionMode: "mouse" | "annotation";
-  viewType: "perspective" | "side" | "topDown";
+  interactionMode: InteractionMode;
+  viewType: ViewType;
 }
 
 function AnnotationMesh({
@@ -36,9 +39,13 @@ function AnnotationMesh({
     document.body.style.cursor = "default";
   };
 
-  // Selected: yellow and slightly larger, Normal: white
-  const color = isSelected ? "#ffff00" : "#ffffff";
-  const scale = isSelected ? 1.3 : 1;
+  const color = isSelected
+    ? SCENE.ANNOTATION.SELECTED_COLOR
+    : SCENE.ANNOTATION.COLOR;
+  const scale = isSelected ? SCENE.ANNOTATION.SELECTED_SCALE : 1;
+  const emissiveIntensity = isSelected
+    ? SCENE.ANNOTATION.SELECTED_EMISSIVE_INTENSITY
+    : SCENE.ANNOTATION.EMISSIVE_INTENSITY;
 
   return (
     <group>
@@ -49,11 +56,13 @@ function AnnotationMesh({
         onPointerOut={handlePointerOut}
         scale={scale}
       >
-        <sphereGeometry args={[0.02, 16, 16]} />
+        <sphereGeometry
+          args={[SCENE.ANNOTATION.POINT_RADIUS, SCENE.ANNOTATION.SEGMENTS, SCENE.ANNOTATION.SEGMENTS]}
+        />
         <meshStandardMaterial
           color={color}
           emissive={color}
-          emissiveIntensity={isSelected ? 3 : 2}
+          emissiveIntensity={emissiveIntensity}
         />
       </mesh>
 
@@ -68,13 +77,16 @@ function AnnotationMesh({
   );
 }
 
-export function Annotations({viewType}: {viewType: "perspective" | "side" | "topDown"}) {
-  const annotations = useAnnotations((state) => state.annotations);
-  const selectedAnnotationId = useAnnotations(
-    (state) => state.selectedAnnotationId
-  );
-  const interactionMode = useAnnotations((state) => state.interactionMode);
-  const selectAnnotation = useAnnotations((state) => state.selectAnnotation);
+export function Annotations({ viewType }: { viewType: ViewType }) {
+  const { annotations, selectedAnnotationId, interactionMode, selectAnnotation } =
+    useAnnotations(
+      useShallow((state) => ({
+        annotations: state.annotations,
+        selectedAnnotationId: state.selectedAnnotationId,
+        interactionMode: state.interactionMode,
+        selectAnnotation: state.selectAnnotation,
+      }))
+    );
 
   return (
     <>

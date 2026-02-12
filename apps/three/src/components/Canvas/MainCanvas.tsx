@@ -2,19 +2,14 @@ import { Canvas } from "@react-three/fiber";
 import { View } from "@react-three/drei";
 import { useRef } from "react";
 import { PerspectiveView } from "./PerspectiveView";
-import { SideView } from "./SideView";
-import { TopDownView } from "./TopDownView";
-//import { SceneObjects } from "../Scene/SceneObjects";
-import { CenterPoint } from "../Scene/CenterPoint";
-import { RayVisualization } from "../Scene/RayVisualization";
-import { Annotations } from "../Scene/Annotations";
-import { PointCloud } from "../Scene/PointCloud";
-import { ViewClickHandler } from "../Controls/ViewClickHandler";
+import { OrthoView } from "./OrthoView";
+import { SceneContent } from "./SceneContent";
 import { CameraInfo } from "../UI/CameraInfo";
 import { KeyGuide } from "../UI/KeyGuide";
 import { ModeIndicator } from "../UI/ModeIndicator";
 import { useKeyboard } from "@/hooks/useKeyboard";
 import { useAnnotations } from "@/hooks/useAnnotations";
+import type { ViewType } from "@/types/view";
 
 function ViewLabel({ children }: { children: string }) {
   return (
@@ -37,21 +32,20 @@ function ViewLabel({ children }: { children: string }) {
   );
 }
 
+const VIEW_TYPES: ViewType[] = ["perspective", "side", "topDown"];
+
 export function MainCanvas() {
   const containerRef = useRef<HTMLDivElement>(null!);
-  const perspectiveRef = useRef<HTMLDivElement>(null!);
-  const sideRef = useRef<HTMLDivElement>(null!);
-  const topDownRef = useRef<HTMLDivElement>(null!);
+  const viewRefs = {
+    perspective: useRef<HTMLDivElement>(null!),
+    side: useRef<HTMLDivElement>(null!),
+    topDown: useRef<HTMLDivElement>(null!),
+  };
 
   const { interactionMode } = useAnnotations();
-
-  // Enable keyboard controls
   useKeyboard();
 
-  // Cursor style based on mode
   const cursorStyle = interactionMode === "annotation" ? "none" : "default";
-
-  const pointCloudFilePath = "/data/2011_09_26_drive_0018_sync/velodyne_points/data/0000000000.bin";
 
   return (
     <div
@@ -70,7 +64,7 @@ export function MainCanvas() {
 
       {/* View 1: Perspective (70%) */}
       <div
-        ref={perspectiveRef}
+        ref={viewRefs.perspective}
         style={{
           width: "70%",
           height: "100%",
@@ -94,7 +88,7 @@ export function MainCanvas() {
       >
         {/* View 2: Side View (top half) */}
         <div
-          ref={sideRef}
+          ref={viewRefs.side}
           style={{
             width: "100%",
             height: "50%",
@@ -108,7 +102,7 @@ export function MainCanvas() {
 
         {/* View 3: Top-Down View (bottom half) */}
         <div
-          ref={topDownRef}
+          ref={viewRefs.topDown}
           style={{
             width: "100%",
             height: "50%",
@@ -132,47 +126,16 @@ export function MainCanvas() {
           pointerEvents: "none",
         }}
       >
-        {/* Perspective View */}
-        <View track={perspectiveRef}>
-          <PerspectiveView />
-          <ViewClickHandler viewType="perspective" containerRef={perspectiveRef} />
-          {/* <SceneObjects /> */}
-          <PointCloud 
-            filePath={pointCloudFilePath}
-            pointSize={0.02}
-          />
-          <CenterPoint />
-          <Annotations viewType="perspective" />
-          <RayVisualization />
-        </View>
-
-        {/* Side View */}
-        <View track={sideRef}>
-          <SideView />
-          <ViewClickHandler viewType="side" containerRef={sideRef} />
-          {/* <SceneObjects /> */}
-          <PointCloud 
-            filePath={pointCloudFilePath}
-            pointSize={0.02}
-          />
-          <CenterPoint />
-          <Annotations viewType="side" />
-          <RayVisualization />
-        </View>
-
-        {/* Top-Down View */}
-        <View track={topDownRef}>
-          <TopDownView />
-          <ViewClickHandler viewType="topDown" containerRef={topDownRef} />
-          {/* <SceneObjects /> */}
-          <PointCloud 
-            filePath={pointCloudFilePath}
-            pointSize={0.02}
-          />
-          <CenterPoint />
-          <Annotations viewType="topDown" />
-          <RayVisualization />
-        </View>
+        {VIEW_TYPES.map((type) => (
+          <View key={type} track={viewRefs[type]}>
+            {type === "perspective" ? (
+              <PerspectiveView />
+            ) : (
+              <OrthoView viewType={type} />
+            )}
+            <SceneContent viewType={type} containerRef={viewRefs[type]} />
+          </View>
+        ))}
       </Canvas>
     </div>
   );
