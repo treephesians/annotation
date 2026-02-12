@@ -1,0 +1,80 @@
+.render-space-bar {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(30, 30, 40, 0.95);
+  border-radius: 8px;
+  padding: 6px 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  z-index: 10;
+  user-select: none;
+  pointer-events: auto;
+}
+
+.render-space-bar__label {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 11px;
+  font-family: monospace;
+  white-space: nowrap;
+  margin-right: 2px;
+}
+
+.render-space-bar__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  padding: 0;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.render-space-bar__btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+}
+
+.render-space-bar__btn--active {
+  background: rgba(0, 255, 255, 0.15);
+  border-color: rgba(0, 255, 255, 0.5);
+  color: #00ffff;
+}
+
+.render-space-bar__btn--active:hover {
+  background: rgba(0, 255, 255, 0.25);
+}
+
+.render-space-bar__btn--off {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.render-space-bar__btn--off:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.render-space-bar__btn--danger {
+  color: rgba(255, 80, 80, 0.6);
+  border-color: rgba(255, 80, 80, 0.2);
+}
+
+.render-space-bar__btn--danger:hover {
+  background: rgba(255, 80, 80, 0.2);
+  border-color: rgba(255, 80, 80, 0.5);
+  color: #ff6b6b;
+}

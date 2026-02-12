@@ -36,6 +36,7 @@ interface AnnotationState {
 
   // Actions
   toggleMode: () => void;
+  setMode: (mode: InteractionMode) => void;
   setRay: (ray: RayState | null) => void;
   setDepth: (depth: number) => void;
   adjustDepth: (delta: number) => void;
@@ -61,11 +62,22 @@ export const useAnnotations = create<AnnotationState>((set, get) => ({
   selectedAnnotationId: null,
 
   toggleMode: () =>
-    set((state) => ({
-      interactionMode: state.interactionMode === "mouse" ? "annotation" : "mouse",
-      currentRay: null, // Clear ray when switching modes
+    set((state) => {
+      // Tab only toggles between mouse and annotation
+      const next = state.interactionMode === "annotation" ? "mouse" : "annotation";
+      return {
+        interactionMode: next,
+        currentRay: null,
+        rayFixed: false,
+      };
+    }),
+
+  setMode: (mode) =>
+    set({
+      interactionMode: mode,
+      currentRay: null,
       rayFixed: false,
-    })),
+    }),
 
   setRay: (ray) => {
     const { rayFixed } = get();

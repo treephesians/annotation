@@ -7,6 +7,7 @@ import { SceneContent } from "./SceneContent";
 import { CameraInfo } from "../UI/CameraInfo";
 import { KeyGuide } from "../UI/KeyGuide";
 import { ModeIndicator } from "../UI/ModeIndicator";
+import { RenderSpaceBar } from "../UI/RenderSpaceBar";
 import { useKeyboard } from "@/hooks/useKeyboard";
 import { useAnnotations } from "@/hooks/useAnnotations";
 import type { ViewType } from "@/types/view";
@@ -75,6 +76,7 @@ export function MainCanvas() {
       >
         <ViewLabel>Main</ViewLabel>
         <ModeIndicator />
+        <RenderSpaceBar />
       </div>
 
       {/* Right Panel (30%) - Split into Side and TopDown */}

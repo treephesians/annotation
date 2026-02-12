@@ -2,6 +2,7 @@ import { PointCloud } from "../Scene/PointCloud";
 import { CenterPoint } from "../Scene/CenterPoint";
 import { Annotations } from "../Scene/Annotations";
 import { RayVisualization } from "../Scene/RayVisualization";
+import { RenderSpace } from "../Scene/RenderSpace";
 import { ViewClickHandler } from "../Controls/ViewClickHandler";
 import { SCENE } from "@/constants/scene";
 import type { ViewType } from "@/types/view";
@@ -22,6 +23,7 @@ export function SceneContent({ viewType, containerRef }: SceneContentProps) {
       <CenterPoint />
       <Annotations viewType={viewType} />
       <RayVisualization />
+      <RenderSpace />
     </>
   );
 }

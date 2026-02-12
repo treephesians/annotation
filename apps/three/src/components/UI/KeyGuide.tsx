@@ -6,6 +6,7 @@ export function KeyGuide() {
 
   const isAnnotation = interactionMode === "annotation";
   const isMouse = interactionMode === "mouse";
+  const isCreate = interactionMode === "create";
   const hasSelection = selectedAnnotationId !== null;
 
   return (
@@ -26,7 +27,7 @@ export function KeyGuide() {
     >
       <div style={{ fontWeight: "bold", marginBottom: 8 }}>Mode</div>
       <div>
-        <kbd>[Tab]</kbd> : Toggle Mode
+        <kbd>[Tab]</kbd> : {isCreate ? "Cancel Create" : "Toggle Mode"}
       </div>
 
       <div style={{ fontWeight: "bold", marginTop: 12, marginBottom: 8 }}>
@@ -72,6 +73,30 @@ export function KeyGuide() {
               </>
             )
           }
+        </>
+      )}
+
+      {isCreate && (
+        <>
+          <div
+            style={{
+              fontWeight: "bold",
+              marginTop: 12,
+              marginBottom: 8,
+              color: "#00ffff",
+            }}
+          >
+            Create
+          </div>
+          <div>
+            <kbd>(Wheel)</kbd> : Resize
+          </div>
+          <div>
+            <kbd>(Click)</kbd> : Confirm
+          </div>
+          <div>
+            <kbd>[Tab]</kbd> / <kbd>[Esc]</kbd> : Cancel
+          </div>
         </>
       )}
 

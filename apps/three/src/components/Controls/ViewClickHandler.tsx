@@ -2,6 +2,7 @@ import { useThree } from "@react-three/fiber";
 import { useCallback, useEffect } from "react";
 import * as THREE from "three";
 import { useAnnotations, RayState } from "../../hooks/useAnnotations";
+import { useRenderSpaces } from "../../hooks/useRenderSpaces";
 import type { ViewType } from "@/types/view";
 
 interface ViewClickHandlerProps {
@@ -15,6 +16,13 @@ export function ViewClickHandler({
 }: ViewClickHandlerProps) {
   const { camera } = useThree();
   const { setRay, interactionMode, adjustDepth, confirmAnnotation, selectAnnotation } = useAnnotations();
+  const {
+    createPhase,
+    adjustCreateRadius,
+    confirmCreate,
+    editingId,
+    adjustRadius,
+  } = useRenderSpaces();
 
   const createRay = useCallback(
     (event: MouseEvent) => {
@@ -50,17 +58,20 @@ export function ViewClickHandler({
   );
 
   const handleClick = useCallback(
-    (event: MouseEvent) => {
+    (_event: MouseEvent) => {
+      // Placing mode: click confirms render space
+      if (createPhase === "placing") {
+        confirmCreate();
+        return;
+      }
+
       if (interactionMode === "annotation") {
-        // In annotation mode, click confirms the annotation
         confirmAnnotation();
       } else {
-        // In mouse mode, clicking on empty space deselects
-        // Note: clicks on annotations are handled by Annotations component with stopPropagation
         selectAnnotation(null);
       }
     },
-    [interactionMode, confirmAnnotation, selectAnnotation]
+    [interactionMode, createPhase, confirmAnnotation, confirmCreate, selectAnnotation]
   );
 
   const handleMouseLeave = useCallback(() => {
@@ -71,13 +82,30 @@ export function ViewClickHandler({
 
   const handleWheel = useCallback(
     (event: WheelEvent) => {
-      if (interactionMode !== "annotation") return;
-
-      event.preventDefault();
       const delta = event.deltaY > 0 ? -1 : 1;
-      adjustDepth(delta);
+
+      // Placing mode: scroll adjusts create radius
+      if (createPhase === "placing") {
+        event.preventDefault();
+        adjustCreateRadius(delta);
+        return;
+      }
+
+      // Editing mode: scroll adjusts existing render space radius
+      if (editingId) {
+        event.preventDefault();
+        adjustRadius(delta);
+        return;
+      }
+
+      // Annotation mode: scroll adjusts depth
+      if (interactionMode === "annotation") {
+        event.preventDefault();
+        adjustDepth(delta);
+        return;
+      }
     },
-    [interactionMode, adjustDepth]
+    [interactionMode, createPhase, editingId, adjustDepth, adjustCreateRadius, adjustRadius]
   );
 
   useEffect(() => {

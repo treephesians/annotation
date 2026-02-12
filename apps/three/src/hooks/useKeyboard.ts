@@ -1,6 +1,7 @@
 import { useEffect, useCallback, useMemo } from "react";
 import { useCameraControl } from "./useCameraControl";
 import { useAnnotations } from "./useAnnotations";
+import { useRenderSpaces } from "./useRenderSpaces";
 
 interface KeyBinding {
   action: () => void;
@@ -31,14 +32,18 @@ export function useKeyboard() {
     deleteAnnotation,
   } = useAnnotations();
 
+  const { cancelCreate } = useRenderSpaces();
+
   const handleEscape = useCallback(() => {
-    if (interactionMode === "annotation") {
+    if (interactionMode === "create") {
+      cancelCreate();
+    } else if (interactionMode === "annotation") {
       cancelAnnotation();
       toggleMode();
     } else if (selectedAnnotationId) {
       selectAnnotation(null);
     }
-  }, [interactionMode, cancelAnnotation, toggleMode, selectedAnnotationId, selectAnnotation]);
+  }, [interactionMode, cancelCreate, cancelAnnotation, toggleMode, selectedAnnotationId, selectAnnotation]);
 
   const handleDelete = useCallback(() => {
     if (interactionMode === "mouse" && selectedAnnotationId) {
@@ -46,10 +51,19 @@ export function useKeyboard() {
     }
   }, [interactionMode, selectedAnnotationId, deleteAnnotation]);
 
+  const handleTab = useCallback(() => {
+    if (interactionMode === "create") {
+      // Tab in create mode acts like ESC — cancel and go to mouse
+      cancelCreate();
+    } else {
+      toggleMode();
+    }
+  }, [interactionMode, toggleMode, cancelCreate]);
+
   const keyMap = useMemo<KeyMap>(() => {
     const map: KeyMap = {
       // Global
-      Tab: { action: toggleMode, preventDefault: true },
+      Tab: { action: handleTab, preventDefault: true },
       Escape: { action: handleEscape },
       // Camera
       e: { action: zoomIn },
@@ -80,7 +94,7 @@ export function useKeyboard() {
     return map;
   }, [
     interactionMode,
-    toggleMode,
+    handleTab,
     handleEscape,
     handleDelete,
     zoomIn,

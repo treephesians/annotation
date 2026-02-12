@@ -25,12 +25,22 @@ export const SCENE = {
     INNER_COLOR: "#ffffff",
   },
   POINT_CLOUD: {
-    DEFAULT_POINT_SIZE: 0.02,
+    DEFAULT_POINT_SIZE: 0.05,
     DEFAULT_FILE_PATH:
       "/data/2011_09_26_drive_0018_sync/velodyne_points/data/0000000000.bin",
   },
   CAMERA: {
     ORTHO_ZOOM_FACTOR: 300,
+  },
+  RENDER_SPACE: {
+    DEFAULT_RADIUS: 10,
+    MIN_RADIUS: 1,
+    MAX_RADIUS: 20,
+    RADIUS_STEP: 0.3,
+    WIREFRAME_COLOR: "#00ffff",
+    WIREFRAME_OPACITY: 0.3,
+    WIREFRAME_SEGMENTS: 32,
+    MAX_COUNT: 8,
   },
   BACKGROUND: {
     perspective: "#252530",

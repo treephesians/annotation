@@ -1,7 +1,8 @@
 import { Html } from "@react-three/drei";
 import * as THREE from "three";
 import { useAnnotations, Annotation } from "../../hooks/useAnnotations";
-import { useCallback, useState } from "react";
+import { useRenderSpaces } from "../../hooks/useRenderSpaces";
+import { useCallback } from "react";
 import "./css/AnnotatedPointMenu.css";
 
 interface AnnotatedPointMenuProps {
@@ -33,10 +34,16 @@ export function AnnotatedPointMenu({
 }: AnnotatedPointMenuProps) {
   const deleteAnnotation = useAnnotations((state) => state.deleteAnnotation);
   const selectAnnotation = useAnnotations((state) => state.selectAnnotation);
+  const enterCreateMode = useRenderSpaces((state) => state.enterCreateMode);
 
   const handleDelete = useCallback(() => {
     deleteAnnotation(annotation.id);
   }, [deleteAnnotation, annotation.id]);
+
+  const handleCreate = useCallback(() => {
+    enterCreateMode(annotation.position);
+    selectAnnotation(null);
+  }, [enterCreateMode, annotation.position, selectAnnotation]);
 
   const handleClose = useCallback(() => {
     selectAnnotation(null);
@@ -63,6 +70,11 @@ export function AnnotatedPointMenu({
         </div>
 
         <div className="context-menu__body">
+          <MenuItem
+            icon="📦"
+            label="Create"
+            onClick={handleCreate}
+          />
           <MenuItem
             icon="🗑️"
             label="Delete"
