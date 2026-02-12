@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import * as THREE from "three";
+import { v4 as uuidv4 } from "uuid";
 
 export type InteractionMode = "mouse" | "annotation";
 
@@ -98,7 +99,7 @@ export const useAnnotations = create<AnnotationState>((set, get) => ({
       .add(currentRay.direction.clone().multiplyScalar(currentDepth));
 
     const newAnnotation: Annotation = {
-      id: crypto.randomUUID(),
+      id: uuidv4(),
       position,
       size: 0.2,
       label: `Point ${annotations.length + 1}`,
