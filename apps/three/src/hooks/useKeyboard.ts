@@ -2,6 +2,7 @@ import { useEffect, useCallback, useMemo } from "react";
 import { useCameraControl } from "./useCameraControl";
 import { useAnnotations } from "./useAnnotations";
 import { useRenderSpaces } from "./useRenderSpaces";
+import { useAutoCuboid } from "./useAutoCuboid";
 
 interface KeyBinding {
   action: () => void;
@@ -24,6 +25,7 @@ export function useKeyboard() {
   const {
     interactionMode,
     toggleMode,
+    setAnnotationTool,
     adjustDepth,
     toggleRayFixed,
     cancelAnnotation,
@@ -33,8 +35,14 @@ export function useKeyboard() {
   } = useAnnotations();
 
   const { cancelCreate } = useRenderSpaces();
+  const autoCuboidPhase = useAutoCuboid((s) => s.phase);
 
   const handleEscape = useCallback(() => {
+    // Auto cuboid takes priority
+    if (autoCuboidPhase !== "idle") {
+      useAutoCuboid.getState().cancelCreate();
+      return;
+    }
     if (interactionMode === "create") {
       cancelCreate();
     } else if (interactionMode === "annotation") {
@@ -43,7 +51,7 @@ export function useKeyboard() {
     } else if (selectedAnnotationId) {
       selectAnnotation(null);
     }
-  }, [interactionMode, cancelCreate, cancelAnnotation, toggleMode, selectedAnnotationId, selectAnnotation]);
+  }, [autoCuboidPhase, interactionMode, cancelCreate, cancelAnnotation, toggleMode, selectedAnnotationId, selectAnnotation]);
 
   const handleDelete = useCallback(() => {
     if (interactionMode === "mouse" && selectedAnnotationId) {
@@ -52,13 +60,16 @@ export function useKeyboard() {
   }, [interactionMode, selectedAnnotationId, deleteAnnotation]);
 
   const handleTab = useCallback(() => {
-    if (interactionMode === "create") {
+    if (autoCuboidPhase !== "idle") {
+      // Tab during auto cuboid acts like ESC — cancel
+      useAutoCuboid.getState().cancelCreate();
+    } else if (interactionMode === "create") {
       // Tab in create mode acts like ESC — cancel and go to mouse
       cancelCreate();
     } else {
       toggleMode();
     }
-  }, [interactionMode, toggleMode, cancelCreate]);
+  }, [autoCuboidPhase, interactionMode, toggleMode, cancelCreate]);
 
   const keyMap = useMemo<KeyMap>(() => {
     const map: KeyMap = {
@@ -77,6 +88,9 @@ export function useKeyboard() {
 
     if (interactionMode === "annotation") {
       Object.assign(map, {
+        "1": { action: () => setAnnotationTool("point") },
+        "2": { action: () => setAnnotationTool("render-space") },
+        "3": { action: () => setAnnotationTool("auto-cuboid") },
         f: { action: toggleRayFixed },
         "+": { action: () => adjustDepth(1) },
         "=": { action: () => adjustDepth(1) },
@@ -106,6 +120,7 @@ export function useKeyboard() {
     reset,
     toggleRayFixed,
     adjustDepth,
+    setAnnotationTool,
   ]);
 
   const handleKeyDown = useCallback(

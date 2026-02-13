@@ -1,9 +1,9 @@
 import { create } from "zustand";
 import * as THREE from "three";
 import { v4 as uuidv4 } from "uuid";
-import type { ViewType, InteractionMode } from "../types/view";
+import type { ViewType, InteractionMode, AnnotationTool } from "../types/view";
 
-export type { InteractionMode };
+export type { InteractionMode, AnnotationTool };
 
 export interface RayState {
   origin: THREE.Vector3;
@@ -23,6 +23,9 @@ interface AnnotationState {
   // Interaction mode (mouse vs annotation)
   interactionMode: InteractionMode;
 
+  // Current annotation tool (what clicking does in annotation mode)
+  annotationTool: AnnotationTool;
+
   // Current ray (when in annotation mode)
   currentRay: RayState | null;
   currentDepth: number;
@@ -37,6 +40,7 @@ interface AnnotationState {
   // Actions
   toggleMode: () => void;
   setMode: (mode: InteractionMode) => void;
+  setAnnotationTool: (tool: AnnotationTool) => void;
   setRay: (ray: RayState | null) => void;
   setDepth: (depth: number) => void;
   adjustDepth: (delta: number) => void;
@@ -55,6 +59,7 @@ const DEPTH_STEP = 0.1;
 
 export const useAnnotations = create<AnnotationState>((set, get) => ({
   interactionMode: "mouse",
+  annotationTool: "point",
   currentRay: null,
   currentDepth: DEFAULT_DEPTH,
   rayFixed: false,
@@ -78,6 +83,8 @@ export const useAnnotations = create<AnnotationState>((set, get) => ({
       currentRay: null,
       rayFixed: false,
     }),
+
+  setAnnotationTool: (tool) => set({ annotationTool: tool }),
 
   setRay: (ray) => {
     const { rayFixed } = get();
@@ -150,6 +157,7 @@ export const useAnnotations = create<AnnotationState>((set, get) => ({
       currentDepth: DEFAULT_DEPTH,
       rayFixed: false,
       interactionMode: "mouse",
+      annotationTool: "point",
       selectedAnnotationId: null,
     }),
 }));

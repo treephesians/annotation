@@ -34,16 +34,16 @@ export function AnnotatedPointMenu({
 }: AnnotatedPointMenuProps) {
   const deleteAnnotation = useAnnotations((state) => state.deleteAnnotation);
   const selectAnnotation = useAnnotations((state) => state.selectAnnotation);
-  const enterCreateMode = useRenderSpaces((state) => state.enterCreateMode);
+  const startPlacing = useRenderSpaces((state) => state.startPlacing);
 
   const handleDelete = useCallback(() => {
     deleteAnnotation(annotation.id);
   }, [deleteAnnotation, annotation.id]);
 
   const handleCreate = useCallback(() => {
-    enterCreateMode(annotation.position);
+    startPlacing(annotation.position);
     selectAnnotation(null);
-  }, [enterCreateMode, annotation.position, selectAnnotation]);
+  }, [startPlacing, annotation.position, selectAnnotation]);
 
   const handleClose = useCallback(() => {
     selectAnnotation(null);

@@ -113,13 +113,20 @@ export function KeyGuide() {
             Annotation {rayFixed && "(Fixed)"}
           </div>
           <div>
+            <kbd>[1]</kbd> Point
+            <br />
+            <kbd>[2]</kbd> RenderSpace
+            <br />
+            <kbd>[3]</kbd> Cuboid
+          </div>
+          <div>
             <kbd>(Move)</kbd> : Aim Ray
           </div>
           <div>
             <kbd>(Wheel)</kbd> / <kbd>+</kbd> <kbd>-</kbd> : Depth
           </div>
           <div>
-            <kbd>(Click)</kbd> : Place Point
+            <kbd>(Click)</kbd> : Place / Create
           </div>
           <div>
             <kbd>[F]</kbd> : Fix / Unfix Ray

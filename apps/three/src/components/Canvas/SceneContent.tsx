@@ -4,6 +4,7 @@ import { Annotations } from "../Scene/Annotations";
 import { RayVisualization } from "../Scene/RayVisualization";
 import { RenderSpace } from "../Scene/RenderSpace";
 import { NormalVisualization } from "../Scene/NormalVisualization";
+import { AutoCuboidVisualization } from "../Scene/AutoCuboidVisualization";
 import { ViewClickHandler } from "../Controls/ViewClickHandler";
 import { SCENE } from "@/constants/scene";
 import type { ViewType } from "@/types/view";
@@ -26,6 +27,7 @@ export function SceneContent({ viewType, containerRef }: SceneContentProps) {
       <RayVisualization />
       <RenderSpace />
       <NormalVisualization sampleRate={200} lineLength={0.15} />
+      <AutoCuboidVisualization />
     </>
   );
 }

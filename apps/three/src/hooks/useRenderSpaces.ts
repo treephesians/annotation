@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import { SCENE } from "@/constants/scene";
 import { useAnnotations } from "./useAnnotations";
 
-export type CreatePhase = "idle" | "selecting-shape" | "placing";
+export type CreatePhase = "idle" | "placing";
 
 export interface RenderSpace {
   id: string;
@@ -26,8 +26,7 @@ interface RenderSpaceState {
   editingId: string | null;
 
   // Create flow actions
-  enterCreateMode: (position: THREE.Vector3) => void;
-  selectShape: (type: string) => void;
+  startPlacing: (position: THREE.Vector3) => void;
   adjustCreateRadius: (delta: number) => void;
   confirmCreate: () => void;
   cancelCreate: () => void;
@@ -50,17 +49,14 @@ export const useRenderSpaces = create<RenderSpaceState>((set, get) => ({
   createRadius: DEFAULT_RADIUS,
   editingId: null,
 
-  enterCreateMode: (position) => {
+  startPlacing: (position) => {
     useAnnotations.getState().setMode("create");
     set({
-      createPhase: "selecting-shape",
+      createPhase: "placing",
       createAnchorPosition: position.clone(),
       createRadius: DEFAULT_RADIUS,
     });
   },
-
-  selectShape: (_type) =>
-    set({ createPhase: "placing" }),
 
   adjustCreateRadius: (delta) =>
     set((state) => ({
@@ -89,7 +85,7 @@ export const useRenderSpaces = create<RenderSpaceState>((set, get) => ({
       createRadius: DEFAULT_RADIUS,
       editingId: null,
     });
-    useAnnotations.getState().setMode("mouse");
+    useAnnotations.getState().setMode("annotation");
   },
 
   cancelCreate: () => {
@@ -98,7 +94,7 @@ export const useRenderSpaces = create<RenderSpaceState>((set, get) => ({
       createAnchorPosition: null,
       createRadius: DEFAULT_RADIUS,
     });
-    useAnnotations.getState().setMode("mouse");
+    useAnnotations.getState().setMode("annotation");
   },
 
   deleteRenderSpace: () =>

@@ -42,6 +42,13 @@ export const SCENE = {
     WIREFRAME_SEGMENTS: 32,
     MAX_COUNT: 8,
   },
+  AUTO_CUBOID: {
+    HIGHLIGHT_COLOR: "#00ff88",
+    HIGHLIGHT_POINT_SIZE: 0.08,
+    DEFAULT_NORMAL_THRESHOLD: 30, // degrees
+    DEFAULT_MAX_DISTANCE: 0.5, // meters
+    DEFAULT_MAX_REGION_SIZE: 4000,
+  },
   BACKGROUND: {
     perspective: "#252530",
     side: "#303035",

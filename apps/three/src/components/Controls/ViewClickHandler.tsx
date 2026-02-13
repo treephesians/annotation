@@ -3,6 +3,7 @@ import { useCallback, useEffect } from "react";
 import * as THREE from "three";
 import { useAnnotations, RayState } from "../../hooks/useAnnotations";
 import { useRenderSpaces } from "../../hooks/useRenderSpaces";
+import { useAutoCuboid } from "../../hooks/useAutoCuboid";
 import type { ViewType } from "@/types/view";
 
 interface ViewClickHandlerProps {
@@ -15,14 +16,16 @@ export function ViewClickHandler({
   containerRef,
 }: ViewClickHandlerProps) {
   const { camera } = useThree();
-  const { setRay, interactionMode, adjustDepth, confirmAnnotation, selectAnnotation } = useAnnotations();
+  const { setRay, interactionMode, annotationTool, adjustDepth, confirmAnnotation, selectAnnotation, currentRay, currentDepth } = useAnnotations();
   const {
     createPhase,
+    startPlacing,
     adjustCreateRadius,
     confirmCreate,
     editingId,
     adjustRadius,
   } = useRenderSpaces();
+  const autoCuboidPhase = useAutoCuboid((s) => s.phase);
 
   const createRay = useCallback(
     (event: MouseEvent) => {
@@ -57,6 +60,13 @@ export function ViewClickHandler({
     [interactionMode, createRay]
   );
 
+  const getRayPosition = useCallback(() => {
+    if (!currentRay) return null;
+    return new THREE.Vector3()
+      .copy(currentRay.origin)
+      .add(currentRay.direction.clone().multiplyScalar(currentDepth));
+  }, [currentRay, currentDepth]);
+
   const handleClick = useCallback(
     (_event: MouseEvent) => {
       // Placing mode: click confirms render space
@@ -65,13 +75,31 @@ export function ViewClickHandler({
         return;
       }
 
+      // Auto cuboid phases (within annotation mode, tool=auto-cuboid)
+      if (autoCuboidPhase === "preview") {
+        useAutoCuboid.getState().confirmCuboid();
+        return;
+      }
+
       if (interactionMode === "annotation") {
-        confirmAnnotation();
+        const pos = getRayPosition();
+
+        switch (annotationTool) {
+          case "point":
+            confirmAnnotation();
+            break;
+          case "render-space":
+            if (pos) startPlacing(pos);
+            break;
+          case "auto-cuboid":
+            if (pos) useAutoCuboid.getState().processClick(pos);
+            break;
+        }
       } else {
         selectAnnotation(null);
       }
     },
-    [interactionMode, createPhase, confirmAnnotation, confirmCreate, selectAnnotation]
+    [interactionMode, annotationTool, createPhase, autoCuboidPhase, getRayPosition, confirmAnnotation, confirmCreate, startPlacing, selectAnnotation]
   );
 
   const handleMouseLeave = useCallback(() => {
