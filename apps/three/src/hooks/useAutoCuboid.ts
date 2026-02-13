@@ -1,15 +1,29 @@
 import { create } from "zustand";
 import * as THREE from "three";
+import { v4 as uuidv4 } from "uuid";
 import { regionGrow } from "../utils/regionGrowing";
 import { findNearestPoint } from "../utils/kdTree";
+import { computeOBB, type OBB } from "../utils/computeOBB";
 import { usePointCloudData } from "./usePointCloudData";
 import { SCENE } from "@/constants/scene";
 
 export type AutoCuboidPhase = "idle" | "picking" | "preview";
 
+export interface Cuboid {
+  id: string;
+  /** OBB center in raw point cloud coords */
+  obb: OBB;
+  timestamp: number;
+}
+
 interface AutoCuboidState {
   phase: AutoCuboidPhase;
   selectedIndices: number[] | null;
+  /** OBB preview computed from selected region */
+  previewOBB: OBB | null;
+
+  /** Confirmed cuboids */
+  cuboids: Cuboid[];
 
   // Region growing params
   normalThreshold: number;
@@ -20,17 +34,20 @@ interface AutoCuboidState {
   processClick: (worldPos: THREE.Vector3) => void;
   confirmCuboid: () => void;
   cancelCreate: () => void;
+  deleteCuboid: (id: string) => void;
 }
 
 export const useAutoCuboid = create<AutoCuboidState>((set, get) => ({
   phase: "idle",
   selectedIndices: null,
+  previewOBB: null,
+  cuboids: [],
   normalThreshold: SCENE.AUTO_CUBOID.DEFAULT_NORMAL_THRESHOLD,
   maxDistance: SCENE.AUTO_CUBOID.DEFAULT_MAX_DISTANCE,
   maxRegionSize: SCENE.AUTO_CUBOID.DEFAULT_MAX_REGION_SIZE,
 
   startPicking: () => {
-    set({ phase: "picking", selectedIndices: null });
+    set({ phase: "picking", selectedIndices: null, previewOBB: null });
   },
 
   processClick: (worldPos: THREE.Vector3) => {
@@ -58,16 +75,39 @@ export const useAutoCuboid = create<AutoCuboidState>((set, get) => ({
     console.timeEnd("regionGrow");
     console.log(`Region growing selected ${selectedIndices.length} points`);
 
-    set({ phase: "preview", selectedIndices });
+    // Compute OBB from selected points
+    console.time("computeOBB");
+    const previewOBB = computeOBB(selectedIndices, positions);
+    console.timeEnd("computeOBB");
+
+    set({ phase: "preview", selectedIndices, previewOBB });
   },
 
   confirmCuboid: () => {
-    // PCA → cuboid generation comes in a later step.
-    // For now, go back to picking so we can test region growing repeatedly.
-    set({ phase: "picking", selectedIndices: null });
+    const { previewOBB } = get();
+    if (!previewOBB) return;
+
+    const newCuboid: Cuboid = {
+      id: uuidv4(),
+      obb: previewOBB,
+      timestamp: Date.now(),
+    };
+
+    set((state) => ({
+      cuboids: [...state.cuboids, newCuboid],
+      phase: "idle",
+      selectedIndices: null,
+      previewOBB: null,
+    }));
   },
 
   cancelCreate: () => {
-    set({ phase: "idle", selectedIndices: null });
+    set({ phase: "idle", selectedIndices: null, previewOBB: null });
+  },
+
+  deleteCuboid: (id) => {
+    set((state) => ({
+      cuboids: state.cuboids.filter((c) => c.id !== id),
+    }));
   },
 }));
