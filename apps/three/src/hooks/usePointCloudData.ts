@@ -3,10 +3,14 @@ import {
   loadKittiPointCloud,
   pointsToBufferData,
 } from "../utils/loadPointCloud";
+import { buildKDTree, type KDTree } from "../utils/kdTree";
+import { computeNormals } from "../utils/normalEstimation";
 
 interface PointCloudDataState {
   positions: Float32Array | null;
   colors: Float32Array | null;
+  normals: Float32Array | null;
+  kdTree: KDTree | null;
   loading: boolean;
   error: string | null;
   loadedPath: string | null;
@@ -16,6 +20,8 @@ interface PointCloudDataState {
 export const usePointCloudData = create<PointCloudDataState>((set, get) => ({
   positions: null,
   colors: null,
+  normals: null,
+  kdTree: null,
   loading: false,
   error: null,
   loadedPath: null,
@@ -28,7 +34,18 @@ export const usePointCloudData = create<PointCloudDataState>((set, get) => ({
     try {
       const points = await loadKittiPointCloud(filePath);
       const { positions, colors } = pointsToBufferData(points);
-      set({ positions, colors, loading: false, loadedPath: filePath });
+
+      // Build spatial index
+      console.time("buildKDTree");
+      const kdTree = buildKDTree(positions);
+      console.timeEnd("buildKDTree");
+
+      // Compute normals
+      console.time("computeNormals");
+      const normals = computeNormals(positions, kdTree, 15);
+      console.timeEnd("computeNormals");
+
+      set({ positions, colors, normals, kdTree, loading: false, loadedPath: filePath });
     } catch (error) {
       console.error("Failed to load point cloud:", error);
       set({ error: String(error), loading: false });
